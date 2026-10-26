@@ -1,5 +1,7 @@
 #include "layout.hpp"
 #include "themes/themes.hpp"
+#include "gui.hpp"
+#include "mobile.hpp"
 
 using namespace geode::prelude;
 
@@ -15,12 +17,31 @@ namespace layout
         static bool calcMenu = false;
         static bool settingsMenu = false;
 
-        ImGui::SetNextWindowSize(ImVec2(565.0f, 400.0f), ImGuiCond_Once);
+        const float uiScale = gui::getUiScale();
+        ImVec2 winSize(565.0f * uiScale, 400.0f * uiScale);
+#ifdef GEODE_IS_MOBILE
+        {
+            auto ds = ImGui::GetIO().DisplaySize;
+            winSize.x = std::min(winSize.x, ds.x * 0.94f);
+            winSize.y = std::min(winSize.y, ds.y * 0.90f);
+            ImGui::SetNextWindowPos(ImVec2(ds.x * 0.5f, ds.y * 0.5f), ImGuiCond_Once, ImVec2(0.5f, 0.5f));
+        }
+#endif
+        ImGui::SetNextWindowSize(winSize, ImGuiCond_Once);
         ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
 
-        if (ImGui::Begin("Xenon Alpha", nullptr, windowFlags))
+#ifdef GEODE_IS_MOBILE
+        static bool windowOpen = true;
+        bool* pOpen = &windowOpen; // title bar close button
+#else
+        bool* pOpen = nullptr;
+#endif
+        bool windowVisible = ImGui::Begin("Xenon Alpha", pOpen, windowFlags);
+        if (pOpen && !*pOpen) { *pOpen = true; gui::toggleGui(); }
+
+        if (windowVisible)
         {
-            ImGui::PushFont(NULL, textSize);
+            ImGui::PushFont(NULL, textSize * uiScale);
             
             const char* labels[] = { "Replay", "Assist", "Macro editor", "Calculator", "Settings" };
             bool* menus[] = { &replayMenu, &assistMenu, &macroMenu, &calcMenu, &settingsMenu };
@@ -64,7 +85,7 @@ namespace layout
                     }
                     ImGui::EndCombo();
                 } ImGui::SameLine();
-                if (ImGui::Button("Save")) { saveMacro(getReplaysDir(), replayName, tps, cbf, macro); } ImGui::SameLine();
+                if (ImGui::Button("Save")) { gui::ensureReplayName(replayName, IM_COUNTOF(replayName)); saveMacro(getReplaysDir(), replayName, tps, cbf, macro); } ImGui::SameLine();
                 if (ImGui::Button("Load"))
                 {
                     loadMacro(getReplaysDir(), replayName);
@@ -82,8 +103,16 @@ namespace layout
 
                 ImGui::Separator();
 
+#ifdef GEODE_IS_ANDROID
+                tps = 240;
+                ImGui::BeginDisabled();
+                ImGui::DragInt("TPS", &tps, 1.0f, 1, 1000000); ImGui::SameLine();
+                ImGui::EndDisabled();
+                gui::HelpMarker("TPS bypass is not available on Android yet.\nTPS is locked to 240.");
+#else
                 ImGui::DragInt("TPS", &tps, 1.0f, 1, 1000000); ImGui::SameLine();
                 gui::HelpMarker("Bypasses the 240 tickrate limit.");
+#endif
 
                 ImGui::DragFloat("Speedhack", &speedhack, 0.01f, 0.01f, 10.0f, "%.2fx");
 
@@ -106,7 +135,18 @@ namespace layout
                 gui::HelpMarker("Enables Xenon's own implementation of CBF.\nDisable the CBF mod by Syzzi and RobTop's CBS.\nChange CBF frame clicked on in Macro Editor.");
 
                 ImGui::Checkbox("Frame stepper", &frameStepper); ImGui::SameLine();
+#ifdef GEODE_IS_MOBILE
+                gui::HelpMarker("Enables frame stepper.\nTap Step to advance one frame (hold to keep stepping).");
+                if (frameStepper)
+                {
+                    ImGui::SameLine();
+                    ImGui::PushItemFlag(ImGuiItemFlags_ButtonRepeat, true);
+                    if (ImGui::Button("Step")) { shouldStep = true; }
+                    ImGui::PopItemFlag();
+                }
+#else
                 gui::HelpMarker("Enables frame stepper.\nDefault keybinds:\nC -> Advance\nV -> Toggle");
+#endif
 
                 ImGui::Checkbox("Block Inputs", &blockInputs); ImGui::SameLine();
                 gui::HelpMarker("Blocks inputs while replaying a macro.");
@@ -195,7 +235,7 @@ namespace layout
                 ImGui::Text("Release for"); ImGui::SameLine();
                 ImGui::DragInt("##ReleaseP2", &p2ReleaseFor, 1, 1, 100000, "%i Frames");
 
-                ImGui::EndChild();
+                gui::touchScroll(); ImGui::EndChild();
             }
 
             if (macroMenu)
@@ -224,7 +264,7 @@ namespace layout
                             ImGui::PopID();
                         }
 
-                        ImGui::EndChild();
+                        gui::touchScroll(); ImGui::EndChild();
                     }
                 }
                 else
@@ -254,7 +294,7 @@ namespace layout
                             ImGui::PopID();
                         }
 
-                        ImGui::EndChild();
+                        gui::touchScroll(); ImGui::EndChild();
                     }
                 }
             }
@@ -376,7 +416,11 @@ namespace layout
                 ImGui::Text("Miscellaneous");
                 ImGui::Separator();
 
+#ifdef GEODE_IS_MOBILE
+                ImGui::TextWrapped("Xenon folder:\n%s", geode::utils::string::pathToString(Mod::get()->getPersistentDir()).c_str());
+#else
                 if (ImGui::Button("Open Xenon folder")) { geode::utils::file::openFolder(Mod::get()->getPersistentDir()); }
+#endif
 
                 if (ImGui::Button("Crash game")) { ImGui::OpenPopup("Crash game"); }
 
@@ -393,9 +437,10 @@ namespace layout
                     ImGui::EndPopup();
                 }
 
-                ImGui::EndChild();
+                gui::touchScroll(); ImGui::EndChild();
             }
 
+            gui::touchScroll(true);
             ImGui::PopFont();
         }
 

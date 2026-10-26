@@ -20,7 +20,12 @@ namespace gui
 		ImGui::GetStyle().FramePadding = { 7.25f, 3 };
 
 		auto& io = ImGui::GetIO();
+#ifdef GEODE_IS_MOBILE
+		io.MouseDrawCursor = false;
+		io.ConfigDragClickToInputText = true; // tap a drag box to type a value
+#else
 		io.MouseDrawCursor = true;
+#endif
 
 		auto fontPath = Mod::get()->getResourcesDir() / "DroidSans.ttf";
 		if (std::filesystem::exists(fontPath))
@@ -51,9 +56,11 @@ namespace gui
 	void toggleGui() { ImGuiCocos::get().toggle(); }
 }
 
+#ifdef GEODE_IS_DESKTOP
 $on_game(Loaded) {
     listenForKeybindSettingPresses("open-menu", [](Keybind const& keybind, bool down, bool repeat, double timestamp) 
 	{
         if (down && !repeat) { gui::toggleGui(); }
     });
 }
+#endif
