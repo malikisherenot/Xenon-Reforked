@@ -28,8 +28,11 @@ add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 CPMAddPackage("gh:matcool/gd-imgui-cocos#b93f08ccef778a53ebba09b20c347f6a63980119")
 target_link_libraries(${PROJECT_NAME} imgui-cocos)
 
-CPMAddPackage("gh:cursey/safetyhook#2f28386")
-target_link_libraries(${PROJECT_NAME} safetyhook)
+# safetyhook is x86-only, Android builds use function hooks instead
+if (NOT ANDROID)
+    CPMAddPackage("gh:cursey/safetyhook#2f28386")
+    target_link_libraries(${PROJECT_NAME} safetyhook)
+endif()
 
 # Set up dependencies, resources, and link Geode.
 setup_geode_mod(${PROJECT_NAME})
