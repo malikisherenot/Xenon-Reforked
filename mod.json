@@ -1,7 +1,8 @@
 {
 	"geode": "5.11.2",
 	"gd": {
-		"win": "2.2081"
+		"win": "2.2081",
+		"android": "2.2081"
 	},
 	"id": "baleszka.xenon",
 	"name": "Xenon",
@@ -14,16 +15,19 @@
 	"settings" : {
 		"open-menu": {
 			"type": "keybind",
+			"platforms": ["win", "mac"],
 			"name": "Open Xenon Bot Menu",
 			"default": "F"
 		},
 		"framestepper-toggle": {
 			"type": "keybind",
+			"platforms": ["win", "mac"],
 			"name": "Framestepper: Toggle",
 			"default": "V"
 		},
 		"framestepper-step": {
 			"type": "keybind",
+			"platforms": ["win", "mac"],
 			"name": "Framestepper: Forward step",
 			"default": "C"
 		}
