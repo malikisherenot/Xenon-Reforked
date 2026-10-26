@@ -29,6 +29,7 @@ void disablePatches();
 
 extern bool patchesEnabled;
 
+#ifndef GEODE_IS_ANDROID
 $execute
 {
     // GJBaseGameLayer::resetLevelVariables @ 0x14023b4f1 && GJBaseGameLayer::resetLevelVariables @ 0x14023b4fd
@@ -74,6 +75,7 @@ $execute
     disablePatches();
 
 }
+#endif
 
 // Resources:
 // 
