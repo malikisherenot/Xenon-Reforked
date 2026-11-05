@@ -2,6 +2,7 @@
 #include "gui.hpp"
 
 #include <Geode/Geode.hpp>
+#include <Geode/ui/SceneManager.hpp>
 
 using namespace geode::prelude;
 
