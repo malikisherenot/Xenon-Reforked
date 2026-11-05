@@ -2,7 +2,7 @@
 #include "gui.hpp"
 
 #include <Geode/Geode.hpp>
-#include <Geode/ui/SceneManager.hpp>
+#include <Geode/modify/CCDirector.hpp>
 
 using namespace geode::prelude;
 
@@ -127,12 +127,35 @@ public:
     }
 };
 
+// keep one button alive and move it into whatever scene is about to run
+static XenonFloatingButton* g_button = nullptr;
+
+static void attachToScene(CCScene* scene)
+{
+    if (!scene) { return; }
+    if (!g_button)
+    {
+        g_button = XenonFloatingButton::create();
+        if (!g_button) { return; }
+        g_button->retain();
+    }
+    if (g_button->getParent() == scene) { return; }
+    g_button->removeFromParentAndCleanup(false);
+    scene->addChild(g_button, 99999);
+}
+
+class $modify(XenonButtonDirector, CCDirector)
+{
+    void willSwitchToScene(CCScene* newScene)
+    {
+        CCDirector::willSwitchToScene(newScene);
+        attachToScene(newScene);
+    }
+};
+
 namespace floatingButton
 {
-    void create()
-    {
-        if (auto btn = XenonFloatingButton::create()) { SceneManager::get()->keepAcrossScenes(btn); }
-    }
+    void create() { attachToScene(CCDirector::get()->getRunningScene()); }
 }
 
 $on_game(Loaded) { floatingButton::create(); }
