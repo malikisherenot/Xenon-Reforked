@@ -55,7 +55,7 @@ class $modify(XenonRelPlayLayer, PlayLayer)
 {
     void pauseGame(bool p0) { SkipReleaseScope s; PlayLayer::pauseGame(p0); }
     void resume() { SkipReleaseScope s; PlayLayer::resume(); }
-    void resumeAndRestart() { SkipReleaseScope s; PlayLayer::resumeAndRestart(); }
+    void resumeAndRestart(bool fromStart) { SkipReleaseScope s; PlayLayer::resumeAndRestart(fromStart); }
 };
 
 class $modify(XenonRelBaseGameLayer, GJBaseGameLayer)
