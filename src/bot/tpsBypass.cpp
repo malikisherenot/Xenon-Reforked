@@ -37,6 +37,7 @@ void calculateSteps(float dt, float targetDt)
     estimatedStepCount = steps;
 }
 
+#ifndef GEODE_IS_ANDROID
 void physDtMidhook(SafetyHookContext &ctx)
 {
     auto pl = GJBaseGameLayer::get();
@@ -98,6 +99,7 @@ $execute
     util::midhook(geode::base::get() + 0x237DCE, "physStepCount", physStepCountMidhook);
     util::midhook(geode::base::get() + 0x238F6E, "restorePhysDt", restorePhysDtHook);
 }
+#endif // GEODE_IS_ANDROID (TPS bypass needs ARM64 midhooks, TPS stays 240)
 
 //
 // Offsets for 2.209:

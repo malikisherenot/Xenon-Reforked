@@ -1,3 +1,5 @@
+#pragma once
+#ifndef GEODE_IS_ANDROID
 #include <safetyhook.hpp>
 #include <safetyhook/easy.hpp>
 
@@ -28,3 +30,4 @@ namespace util
 
     void midhook(uintptr_t address, std::string_view label, void (*callback)(safetyhook::Context &));
 }
+#endif

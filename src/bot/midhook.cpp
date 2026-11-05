@@ -1,3 +1,4 @@
+#ifndef GEODE_IS_ANDROID
 #include "midhook.hpp"
 
 #include <Geode/Geode.hpp>
@@ -14,3 +15,4 @@ namespace util
 }
 
 // all this borrowed from silicate sob
+#endif

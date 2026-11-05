@@ -6,6 +6,7 @@
 
 using namespace geode::prelude;
 
+#ifdef GEODE_IS_DESKTOP
 $on_game(Loaded) {
     listenForKeybindSettingPresses("framestepper-toggle", [](Keybind const& keybind, bool down, bool repeat, double timestamp) 
     {
@@ -18,6 +19,7 @@ $on_game(Loaded) {
         else if (down && repeat && frameStepper) { shouldStep = true; }
     });
 }
+#endif
 
 class $modify(FSGJBaseGameLayer, GJBaseGameLayer)
 {
