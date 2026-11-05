@@ -136,7 +136,9 @@ namespace layout
 
                 ImGui::Checkbox("Frame stepper", &frameStepper); ImGui::SameLine();
 #ifdef GEODE_IS_MOBILE
-                gui::HelpMarker("Enables frame stepper.\nTap Step to advance one frame (hold to keep stepping).");
+                gui::HelpMarker("Enables frame stepper.\nOn-screen buttons appear in the level (bottom center):\nSTEPPER toggles it, STEP advances one frame (hold to keep stepping).");
+                ImGui::SameLine();
+                if (ImGui::Checkbox("Buttons", &stepperButtons)) { Mod::get()->setSavedValue<bool>("xenon-stepper-buttons", stepperButtons); }
                 if (frameStepper)
                 {
                     ImGui::SameLine();
