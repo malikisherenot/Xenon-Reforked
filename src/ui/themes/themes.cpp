@@ -1,6 +1,7 @@
 #include "themes.hpp"
 
 #include <imgui-cocos.hpp>
+#include "../mobile.hpp"
 
 using namespace geode::prelude;
 
@@ -29,7 +30,13 @@ namespace themes
 		if (index < list.size())
 		{
 			log::info("Applying theme {}", index);
+#ifdef GEODE_IS_MOBILE
+			ImGui::GetStyle() = ImGuiStyle();
+#endif
 			list[index].apply();
+#ifdef GEODE_IS_MOBILE
+			ImGui::GetStyle().ScaleAllSizes(gui::getUiScale());
+#endif
 			currentThemeIndex() = index;
 			Mod::get()->setSavedValue<int>("xenon-theme", index);
 			static_cast<void>(Mod::get()->saveData());
