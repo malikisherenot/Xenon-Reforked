@@ -34,7 +34,7 @@ class XenonFloatingButton : public CCLayer
         m_button->setContentSize({ SIZE, SIZE });
         m_button->setAnchorPoint({ 0.5f, 0.5f });
 
-        // same look as the Glass theme: dark glass body, soft blue border, cyan accent text
+        // this was not fun
         auto border = CCScale9Sprite::create("square02b_001.png", { 0, 0, 80, 80 });
         border->setContentSize({ SIZE + 3.f, SIZE + 3.f });
         border->setColor({ 128, 128, 230 });
@@ -128,7 +128,7 @@ public:
     }
 };
 
-// In-level frame stepper controls (bottom center): STEPPER on/off + STEP (hold to repeat)
+// frame stepper controls!!
 class XenonStepperPanel : public CCLayer
 {
     static constexpr float H = 28.f;
