@@ -9,7 +9,7 @@
 
 namespace gui
 {
-    // 1.0 on desktop, scales the whole ImGui UI on phones/tablets
+    // size for mobile 
     inline float getUiScale()
     {
 #ifdef GEODE_IS_MOBILE
